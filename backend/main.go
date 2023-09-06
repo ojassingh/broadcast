@@ -30,7 +30,6 @@ func reader(conn *websocket.Conn) {
 			log.Println(err)
 			return
 		}
-
 	}
 }
 
