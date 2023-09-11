@@ -8,14 +8,21 @@ import (
 	database "github.com/TutorialEdge/realtime-chat-go-react/databases"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func DeleteItem(c *gin.Context) {
-	id := c.Param("id")
+	itemID := c.Param("id")
+	objectID, err := primitive.ObjectIDFromHex(itemID)
+	if err != nil {
+		// Handle the error, e.g., invalid item ID format
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid item ID format"})
+		return
+	}
+
+	filter := bson.D{{"_id", objectID}}
 	var client = database.ConnectDB()
 	var collection = collection.GetCollection(client)
-
-	filter := bson.M{"_id": id}
 
 	result, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
