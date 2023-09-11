@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/TutorialEdge/realtime-chat-go-react/pkg/websocket"
+	"github.com/TutorialEdge/realtime-chat-go-react/routes"
+	"github.com/gin-gonic/gin"
 )
 
 func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
@@ -24,16 +26,28 @@ func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 }
 
 func setupRoutes() {
-	pool := websocket.NewPool()
-	go pool.Start()
+	r := gin.Default()
 
-	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		serveWs(pool, w, r)
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Hello, World!",
+		})
 	})
+
+	r.GET("/items", routes.ReadAll)
+	r.GET("/items/:id", routes.ReadItem)
+	r.POST("/items", routes.CreateItem)
+
+	if err := r.Run(":8000"); err != nil {
+		fmt.Println("Gin server failed: ", err)
+	}
 }
 
 func main() {
-	fmt.Println("Distributed Chat App v0.01")
+
 	setupRoutes()
-	http.ListenAndServe(":8080", nil)
+
+	if err := http.ListenAndServe(":8000", nil); err != nil {
+		fmt.Println("WebSocket server failed: ", err)
+	}
 }
