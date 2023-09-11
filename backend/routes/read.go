@@ -16,7 +16,9 @@ func ReadItem(c *gin.Context) {
 	var client = database.ConnectDB()
 	var collection = collection.GetCollection(client)
 
-	filter := bson.D{}
+	itemID := c.Param("id")
+
+	filter := bson.D{{"_id", itemID}}
 
 	// cursor, err := collection.Find()
 
@@ -27,19 +29,19 @@ func ReadItem(c *gin.Context) {
 	}
 	defer cursor.Close(context.TODO())
 
-	// var items []model.Item
-	// for cursor.Next(context.TODO()) {
-	// 	var item model.Item
-	// 	if err := cursor.Decode(&item); err != nil {
-	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	// 		return
-	// 	}
-	// 	items = append(items, item)
-	// }
+	var items []model.Item
+	for cursor.Next(context.TODO()) {
+		var item model.Item
+		if err := cursor.Decode(&item); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		items = append(items, item)
+	}
 
-	// c.JSON(http.StatusOK, items)
+	c.JSON(http.StatusOK, items)
 
-	c.JSON(200, "Hi")
+	// c.JSON(200, "Hi")
 
 	database.DisconnectDB(client)
 }
