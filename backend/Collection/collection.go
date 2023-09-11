@@ -1,8 +1,6 @@
 package collection
 
-import (
-	"go.mongodb.org/mongo-driver/mongo"
-)
+import "go.mongodb.org/mongo-driver/mongo"
 
 func GetCollection(client *mongo.Client) *mongo.Collection {
 	// var client = database.ConnectDB()

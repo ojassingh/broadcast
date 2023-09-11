@@ -3,14 +3,24 @@ package database
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
 
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func ConnectDB() *mongo.Client {
+
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
+	secretKey := os.Getenv("MONGODB_URI")
+
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
-	opts := options.Client().ApplyURI("mongodb+srv://ojassingh:ojassingh@cluster0.dkatlvz.mongodb.net/?retryWrites=true&w=majority").SetServerAPIOptions(serverAPI)
+	opts := options.Client().ApplyURI(secretKey).SetServerAPIOptions(serverAPI)
 	client, err := mongo.Connect(context.TODO(), opts)
 
 	if err != nil {

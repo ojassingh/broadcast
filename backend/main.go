@@ -37,6 +37,7 @@ func setupRoutes() {
 	r.GET("/items", routes.ReadAll)
 	r.GET("/items/:id", routes.ReadItem)
 	r.POST("/items", routes.CreateItem)
+	r.DELETE("/items/:id", routes.DeleteItem)
 
 	if err := r.Run(":8000"); err != nil {
 		fmt.Println("Gin server failed: ", err)

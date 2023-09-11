@@ -9,6 +9,7 @@ import (
 	"github.com/TutorialEdge/realtime-chat-go-react/model"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func ReadItem(c *gin.Context) {
@@ -17,31 +18,26 @@ func ReadItem(c *gin.Context) {
 	var collection = collection.GetCollection(client)
 
 	itemID := c.Param("id")
+	objectID, err := primitive.ObjectIDFromHex(itemID)
+	if err != nil {
+		// Handle the error, e.g., invalid item ID format
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid item ID format"})
+		return
+	}
 
-	filter := bson.D{{"_id", itemID}}
+	filter := bson.D{{"_id", objectID}}
 
 	// cursor, err := collection.Find()
 
-	cursor, err := collection.Find(context.TODO(), filter)
+	var item model.Item
+	err = collection.FindOne(context.TODO(), filter).Decode(&item)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		// Handle the error, e.g., item not found
+		c.JSON(http.StatusNotFound, gin.H{"error": "Item not found"})
 		return
 	}
-	defer cursor.Close(context.TODO())
 
-	var items []model.Item
-	for cursor.Next(context.TODO()) {
-		var item model.Item
-		if err := cursor.Decode(&item); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-		items = append(items, item)
-	}
-
-	c.JSON(http.StatusOK, items)
-
-	// c.JSON(200, "Hi")
+	c.JSON(http.StatusOK, item)
 
 	database.DisconnectDB(client)
 }
