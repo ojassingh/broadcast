@@ -1,4 +1,4 @@
-var socket = new WebSocket("ws://localhost:8080/ws");
+var socket = new WebSocket("ws://localhost:8000/ws");
 
 let connect = (cb: any) => {
     console.log("connecting");

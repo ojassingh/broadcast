@@ -7,9 +7,18 @@ import (
 	"github.com/TutorialEdge/realtime-chat-go-react/pkg/websocket"
 	"github.com/TutorialEdge/realtime-chat-go-react/routes"
 	"github.com/gin-gonic/gin"
+	// "github.com/gorilla/websocket"
+	// "github.com/TutorialEdge/realtime-chat-go-react/routes"
 )
 
-func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
+func handleWebSocket(c *gin.Context) {
+
+	w := c.Writer
+	r := c.Request
+
+	pool := websocket.NewPool()
+	go pool.Start()
+
 	fmt.Println("WebSocket Endpoint Hit")
 	conn, err := websocket.Upgrade(w, r)
 	if err != nil {
@@ -26,7 +35,10 @@ func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 }
 
 func setupRoutes() {
+
 	r := gin.Default()
+
+	r.GET("/ws", handleWebSocket)
 
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
@@ -42,6 +54,7 @@ func setupRoutes() {
 	if err := r.Run(":8000"); err != nil {
 		fmt.Println("Gin server failed: ", err)
 	}
+
 }
 
 func main() {
@@ -49,6 +62,7 @@ func main() {
 	setupRoutes()
 
 	if err := http.ListenAndServe(":8000", nil); err != nil {
-		fmt.Println("WebSocket server failed: ", err)
+		fmt.Println("server failed: ", err)
 	}
+
 }
