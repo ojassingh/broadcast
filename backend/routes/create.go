@@ -13,7 +13,7 @@ import (
 
 func CreateItem(c *gin.Context) {
 
-	var newItem model.Item
+	var newItem model.Post
 	if err := c.ShouldBindJSON(&newItem); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
 		return

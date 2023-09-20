@@ -29,7 +29,7 @@ func ReadItem(c *gin.Context) {
 
 	// cursor, err := collection.Find()
 
-	var item model.Item
+	var item model.Post
 	err = collection.FindOne(context.TODO(), filter).Decode(&item)
 	if err != nil {
 		// Handle the error, e.g., item not found
@@ -58,9 +58,9 @@ func ReadAll(c *gin.Context) {
 
 	defer cursor.Close(context.TODO())
 
-	var items []model.Item
+	var items []model.Post
 	for cursor.Next(context.TODO()) {
-		var item model.Item
+		var item model.Post
 		if err := cursor.Decode(&item); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return

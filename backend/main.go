@@ -6,6 +6,7 @@ import (
 
 	"github.com/TutorialEdge/realtime-chat-go-react/pkg/websocket"
 	"github.com/TutorialEdge/realtime-chat-go-react/routes"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	// "github.com/gorilla/websocket"
 	// "github.com/TutorialEdge/realtime-chat-go-react/routes"
@@ -37,6 +38,9 @@ func handleWebSocket(c *gin.Context) {
 func setupRoutes() {
 
 	r := gin.Default()
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://localhost:3000"} // Replace with your frontend's URL
+	r.Use(cors.New(config))
 
 	r.GET("/ws", handleWebSocket)
 

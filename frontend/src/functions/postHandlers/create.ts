@@ -1,5 +1,12 @@
+import axios from "axios";
 
+export default async function create(data: any){
 
-export default function create(data: any){
-    return;
+    console.log("Intialising creation for: ", data)
+
+    const creation = (await axios.post("http://localhost:8000/items", data)).data
+
+    console.log(creation)
+
+    // return creation;
 }
