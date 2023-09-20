@@ -34,14 +34,15 @@ To run the Broadcast app locally, follow these steps:
    cd broadcast
    ```
 2. Configure the environment variables. Create a .env file in the root directory and set the following variables:
-   ```bash
+
+```bash
 # Backend Configuration
 DB_CONNECTION_STRING=mongodb://localhost:27017/broadcast
 JWT_SECRET=your-secret-key
 
 # Frontend Configuration
 NEXT_PUBLIC_API_URL=http://localhost:8080/api
-   ```
+```
 3. Install dependencies for both the backend and frontend:
 
 ```bash
